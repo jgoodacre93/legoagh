@@ -221,7 +221,7 @@ download_lego() {
     releaseURL=$(curl -s "https://api.github.com/repos/go-acme/lego/releases/latest" | grep "browser_download_url" | grep "${arch}" | grep -v "\.sbom\." | grep -o "https://[^\"]*")
     
     echo "Downloading the latest lego release from ${releaseURL}"
-    curl -s -L "${releaseURL}" --output ${legoDist}
+    curl -L "${releaseURL}" --output ${legoDist}
 
     if [ -f ${legoDist} ]; then
         echo "Extracting the latest lego version"
@@ -239,7 +239,7 @@ run_lego_cloudflare() {
             run \
             --accept-tos \
             --server "${SERVER:-}" \
-            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --eab --eab.kid "${EAB_KID:-}" --eab.hmac "${EAB_HMAC:-}" \
             --dns cloudflare \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
@@ -269,7 +269,7 @@ run_lego_godaddy() {
             run \
             --accept-tos \
             --server "${SERVER:-}" \
-            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --eab --eab.kid "${EAB_KID:-}" --eab.hmac "${EAB_HMAC:-}" \
             --dns godaddy \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
@@ -299,7 +299,7 @@ run_lego_digitalocean() {
             run \
             --accept-tos \
             --server "${SERVER:-}" \
-            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --eab --eab.kid "${EAB_KID:-}" --eab.hmac "${EAB_HMAC:-}" \
             --dns digitalocean \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
@@ -328,7 +328,7 @@ run_lego_dreamhost() {
             run \
             --accept-tos \
             --server "${SERVER:-}" \
-            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --eab --eab.kid "${EAB_KID:-}" --eab.hmac "${EAB_HMAC:-}" \
             --dns dreamhost \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
@@ -358,7 +358,7 @@ run_lego_duckdns() {
             run \
             --accept-tos \
             --server "${SERVER:-}" \
-            --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
+            --eab --eab.kid "${EAB_KID:-}" --eab.hmac "${EAB_HMAC:-}" \
             --dns duckdns \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
