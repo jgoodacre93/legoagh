@@ -210,18 +210,18 @@ set_cpu() {
 }
 
 download_lego() {
-    legoDist="lego.tar.gz"
-    etagFile=".lego.etag"
-    arch="_${os}_${cpu}.tar"
-    releaseURL=$(curl -s "https://api.github.com/repos/go-acme/lego/releases/latest" | grep "browser_download_url" | grep "${arch}" | grep -o "https://[^\"]*")
-    
-    # If the lego executable doesn't exist then wipe our etags so that it gets re-downloaded
-    if [ ! -f lego ]; then
-        rm -f ${etagFile} 
+    # If lego already exists, skip download.
+    if [ -f lego ]; then
+        echo "lego already exists, skipping download."
+        return
     fi
 
+    legoDist="lego.tar.gz"
+    arch="_${os}_${cpu}.tar"
+    releaseURL=$(curl -s "https://api.github.com/repos/go-acme/lego/releases/latest" | grep "browser_download_url" | grep "${arch}" | grep -v "\.sbom\." | grep -o "https://[^\"]*")
+    
     echo "Downloading the latest lego release from ${releaseURL}"
-    curl -L --etag-save ${etagFile} --etag-compare ${etagFile} "${releaseURL}" --output ${legoDist}
+    curl -s -L "${releaseURL}" --output ${legoDist}
 
     if [ -f ${legoDist} ]; then
         echo "Extracting the latest lego version"
@@ -236,6 +236,7 @@ run_lego_cloudflare() {
         [ "${EAB_HMAC:-}" != "" ]; then
         CLOUDFLARE_DNS_API_TOKEN="${CLOUDFLARE_DNS_API_TOKEN}" \
             ./lego \
+            run \
             --accept-tos \
             --server "${SERVER:-}" \
             --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
@@ -243,18 +244,17 @@ run_lego_cloudflare() {
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
-            --cert.timeout 600 \
-            run
+            --cert.timeout 600
     else
         CLOUDFLARE_DNS_API_TOKEN="${CLOUDFLARE_DNS_API_TOKEN}" \
             ./lego \
+            run \
             --accept-tos \
             --dns cloudflare \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -266,6 +266,7 @@ run_lego_godaddy() {
         GODADDY_API_KEY="${GODADDY_API_KEY}" \
             GODADDY_API_SECRET="${GODADDY_API_SECRET}" \
             ./lego \
+            run \
             --accept-tos \
             --server "${SERVER:-}" \
             --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
@@ -273,19 +274,18 @@ run_lego_godaddy() {
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
-            --cert.timeout 600 \
-            run
+            --cert.timeout 600
     else
         GODADDY_API_KEY="${GODADDY_API_KEY}" \
             GODADDY_API_SECRET="${GODADDY_API_SECRET}" \
             ./lego \
+            run \
             --accept-tos \
             --dns godaddy \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -296,6 +296,7 @@ run_lego_digitalocean() {
         [ "${EAB_HMAC:-}" != "" ]; then
         DO_AUTH_TOKEN="${DO_AUTH_TOKEN}" \
             ./lego \
+            run \
             --accept-tos \
             --server "${SERVER:-}" \
             --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
@@ -303,18 +304,17 @@ run_lego_digitalocean() {
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
-            --cert.timeout 600 \
-            run
+            --cert.timeout 600
     else
         DO_AUTH_TOKEN="${DO_AUTH_TOKEN}" \
             ./lego \
+            run \
             --accept-tos \
             --dns digitalocean \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -325,6 +325,7 @@ run_lego_dreamhost() {
         [ "${EAB_HMAC:-}" != "" ]; then
         DREAMHOST_API_KEY="${DREAMHOST_API_KEY}" \
             ./lego \
+            run \
             --accept-tos \
             --server "${SERVER:-}" \
             --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
@@ -332,18 +333,17 @@ run_lego_dreamhost() {
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
-            --cert.timeout 600 \
-            run
+            --cert.timeout 600
     else
         DREAMHOST_API_KEY="${DREAMHOST_API_KEY}" \
             ./lego \
+            run \
             --accept-tos \
             --dns dreamhost \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
             --preferred-chain="ISRG Root X1"
     fi
 }
@@ -355,6 +355,7 @@ run_lego_duckdns() {
         [ "${EAB_HMAC:-}" != "" ]; then
         DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
             ./lego \
+            run \
             --accept-tos \
             --server "${SERVER:-}" \
             --eab --kid "${EAB_KID:-}" --hmac "${EAB_HMAC:-}" \
@@ -362,18 +363,17 @@ run_lego_duckdns() {
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
-            --cert.timeout 600 \
-            run
+            --cert.timeout 600
     else
         DUCKDNS_TOKEN="${DUCKDNS_TOKEN}" \
             ./lego \
+            run \
             --accept-tos \
             --dns duckdns \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
             --cert.timeout 600 \
-            run \
             --preferred-chain="ISRG Root X1"
     fi
 }
