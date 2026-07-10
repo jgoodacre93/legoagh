@@ -241,6 +241,7 @@ run_lego_cloudflare() {
             --server "${SERVER:-}" \
             --eab --eab.kid "${EAB_KID:-}" --eab.hmac "${EAB_HMAC:-}" \
             --dns cloudflare \
+            --dns.resolvers 1.1.1.1 \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
@@ -251,6 +252,7 @@ run_lego_cloudflare() {
             run \
             --accept-tos \
             --dns cloudflare \
+            --dns.resolvers 1.1.1.1 \
             --domains "${wildcardDomainName}" \
             --domains "${domainName}" \
             --email "${email}" \
